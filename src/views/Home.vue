@@ -1,8 +1,10 @@
 <template>
   <div class="home">
     <h1>Adopt a new best friend!</h1>
-    <button class="btn btn-primary" @click="togglePetForm">Add new pet</button>
-    <b-form @submit="handleSubmit" v-if="showPetForm">
+    <!-- {{getAllCats.length}}
+    {{animalsCount}} -->
+    <button class="btn btn-primary mt-5" @click="togglePetForm" v-if="!showPetForm">Add new pet</button>
+    <b-form class="mt-5" @submit.prevent="handleSubmit" v-if="showPetForm">
       <b-form-group id="input-group-2" label="Pet Name:" label-for="input-1">
         <b-form-input
           id="input-1"
@@ -21,14 +23,14 @@
         <b-form-input id="input-3" type="number" v-model="formData.age" required></b-form-input>
       </b-form-group>
 
-      <b-button type="submit" variant="primary">Submit</b-button>
-      <b-button type="reset" variant="danger">Reset</b-button>
+      <b-button class="mx-2" type="submit" variant="primary">Submit</b-button>
+      <b-button class="mx-2" @click="togglePetForm">Cancel</b-button>
     </b-form>
   </div>
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 
 export default {
   name: 'Home',
@@ -42,10 +44,14 @@ export default {
       }
     }
   },
+  computed: {
+    ...mapGetters([
+      'animalsCount',
+      'getAllCats'
+    ])
+  },
   methods: {
-    ...mapActions([
-      'addPet'
-    ]),
+    ...mapActions(['addPet']),
     togglePetForm () {
       this.showPetForm = !this.showPetForm
     },
@@ -59,6 +65,12 @@ export default {
         }
       }
       this.addPet(payload)
+      this.showPetForm = false
+      this.formData = {
+        name: '',
+        age: 0,
+        species: null
+      }
     }
   }
 }
